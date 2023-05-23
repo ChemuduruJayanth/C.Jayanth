@@ -1,40 +1,48 @@
 view: sql_runner_query {
   derived_table: {
     sql: SELECT
-          inventory_items.id  AS `inventory_items.id`,
-              (DATE(CONVERT_TZ(inventory_items.sold_at ,'UTC','Asia/Kolkata'))) AS `inventory_items.sold_date`,
-          AVG(inventory_items.cost ) AS `inventory_items.average_cost`
-      FROM demo_db.inventory_items  AS inventory_items
+          order_items.id  AS `order_items.id`,
+          order_items.order_id  AS `order_items.order_id`,
+          order_items.sale_price * 100 AS `order_items.sale_price`,
+          COUNT(*) AS `order_items.count`
+      FROM demo_db.order_items  AS order_items
       GROUP BY
           1,
-          2
+          2,
+          3
       ORDER BY
-          (DATE(CONVERT_TZ(inventory_items.sold_at ,'UTC','Asia/Kolkata'))) DESC
-      LIMIT 100
+          COUNT(*) DESC
        ;;
   }
 
   measure: count {
+    hidden: yes
     type: count
     drill_fields: [detail*]
   }
 
-  dimension: inventory_items_id {
+  dimension: order_items_id {
     type: number
-    sql: ${TABLE}.`inventory_items.id` ;;
+    sql: ${TABLE}.`order_items.id` ;;
   }
 
-  dimension: inventory_items_sold_date {
-    type: date
-    sql: ${TABLE}.`inventory_items.sold_date` ;;
+  dimension: order_items_order_id {
+    primary_key: yes
+    type: number
+    sql: ${TABLE}.`order_items.order_id` ;;
   }
 
-  dimension: inventory_items_average_cost {
+  dimension: order_items_sale_price {
     type: number
-    sql: ${TABLE}.`inventory_items.average_cost` ;;
+    sql: ${TABLE}.`order_items.sale_price` ;;
+  }
+
+  dimension: order_items_count {
+    type: number
+    sql: ${TABLE}.`order_items.count` ;;
   }
 
   set: detail {
-    fields: [inventory_items_id, inventory_items_sold_date, inventory_items_average_cost]
+    fields: [order_items_id, order_items_order_id, order_items_sale_price, order_items_count]
   }
 }
