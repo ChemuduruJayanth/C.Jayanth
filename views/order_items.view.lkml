@@ -72,6 +72,16 @@ view: order_items {
 
   measure: average_sale_price {
     type: average
+    html:
+    {% if value > 700 %}
+    <font style="color: red; font-size: 100%">{{ rendered_value }}</font>
+    {% elsif value >500 %}
+    <font style="color: green; font-size:80%">{{ rendered_value }}</font>
+    {% else %}
+    <font style="color: black; font-size:50%">{{ rendered_value }}</font>
+    {% endif %};;
+
+
     sql: ${sale_price} ;;
   }
 
