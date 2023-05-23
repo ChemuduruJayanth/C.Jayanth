@@ -39,6 +39,7 @@ view: users {
   dimension: city {
     type: string
     sql: ${TABLE}.city ;;
+    drill_fields: [state,city]
   }
 
   dimension: country {
